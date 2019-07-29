@@ -10,9 +10,9 @@ func resourceServer() *schema.Resource {
 		Delete: resourceServerDelete,
 
 		Schema: map[string]*schema.Schema{
-			"address": &schema.Schema{ // address는 필수 요소
+			"address": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Required: true, // address를 필수로 입력하도록 설정
 			},
 		},
 	}
