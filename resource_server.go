@@ -19,6 +19,8 @@ func resourceServer() *schema.Resource {
 }
 
 func resourceServerCreate(d *schema.ResourceData, m interface{}) error {
+	address := d.Get("address").(string)
+	d.SetId(address) // 리소스의 ID를 address 값으로 설정 (id는 테라폼에서 관리하는 id - 해당 리소스르 참조하기 위해 사용)
 	return resourceServerRead(d, m)
 }
 
