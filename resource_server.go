@@ -20,7 +20,9 @@ func resourceServer() *schema.Resource {
 
 func resourceServerCreate(d *schema.ResourceData, m interface{}) error {
 	address := d.Get("address").(string)
-	d.SetId(address) // 리소스의 ID를 address 값으로 설정 (id는 테라폼에서 관리하는 id - 해당 리소스르 참조하기 위해 사용)
+
+	// 리소스의 ID를 address 값으로 설정 (해당 리소스 값은 tfstate에 기록된다)
+	d.SetId(address)
 	return resourceServerRead(d, m)
 }
 
@@ -29,9 +31,31 @@ func resourceServerRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceServerUpdate(d *schema.ResourceData, m interface{}) error {
+	// 부분 상태 모드로 활성화
+	// 이를 활성화하면 리소스의 일부 변경 시 오류가 발생하면 부분적인 상태를 반환한다.
+	d.Partial(true)
+
+	if d.HasChange("address") {
+		if err := updateAddress(d, m); err != nil {
+			return err
+		}
+
+		d.SetPartial("address")
+	}
+
+	// 부분 모드를 활성화 한채로 함수를 종료하면 변경된 리소스만 반영된다.
+	// 부분 모드를 비활성화하면 모든 필드를 다시 저장하게 된다.
+	d.Partial(false)
+
 	return resourceServerRead(d, m)
 }
 
+func updateAddress(d *schema.ResourceData, m interface{}) error {
+	// 예제이기 때문에 별도 업데이트 동작 없음
+	return nil
+}
+
 func resourceServerDelete(d *schema.ResourceData, m interface{}) error {
+	d.SetId("")
 	return nil
 }
